@@ -12,8 +12,8 @@ terraform {
     region   = "ru-central1"
     key      = "terraform.tfstate" #from windows
     #    key        = "./terraform.tfstate" #from linux
-    access_key = "YCAJEuU0nHfzi4MbHMOq2bQk_"
-    secret_key = "YCMcKQkucbJ3ThlyBoTEf42kfwLjLkT9FTUUUJdt"
+    access_key = "YC************""
+    secret_key = "YC************"
 
     skip_region_validation      = true
     skip_credentials_validation = true
@@ -28,12 +28,6 @@ provider "yandex" {
   zone                     = var.zone-a    #"ru-central1-a"
 }
 
-#creata bucket - only one time
-#resource "yandex_storage_bucket" "netology-diplom-backet" {
-#  access_key = "YCAJEuU0nHfzi4MbHMOq2bQk_" #key_id "<идентификатор статического ключа>"
-#  secret_key = "YCMcKQkucbJ3ThlyBoTEf42kfwLjLkT9FTUUUJdt" #secret "<секретный ключ>"
-#  bucket     = "netology-diplom-backet"
-#}
 
 
 
