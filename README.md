@@ -116,8 +116,8 @@ on linux_amd64
     bucket   = "netology-diplom-backet"
     region   = "ru-central1"
     key      = "terraform.tfstate" 
-    access_key = "YCAJEuU0nHfzi4MbHMOq2bQk_"
-    secret_key = "YCMcKQkucbJ3ThlyBoTEf42kfwLjLkT9FTUUUJdt"
+    access_key = "YC************""
+    secret_key = "YC************""
 
     skip_region_validation      = true
     skip_credentials_validation = true
