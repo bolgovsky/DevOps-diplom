@@ -1,0 +1,17 @@
+---
+# defaults file for wordpress
+domain: bolgovsky.ru
+
+#install
+php_modules: [ 'php-curl', 'php-gd', 'php-mbstring', 'php-xml', 'php-xmlrpc', 'php-soap', 'php-intl', 'php-zip' ]
+app_packages: [ 'apache2', 'python3-pymysql', 'php', 'php-mysql', 'libapache2-mod-php', 'git' ]
+
+#HTTP Settings
+http_host: "app.{{ domain }}"
+http_port: "80"
+
+#db connect
+db_host: "db01"
+mysql_password: "wordpress"
+mysql_user: "wordpress"
+mysql_db: "wordpress"

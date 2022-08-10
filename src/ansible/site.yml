@@ -1,0 +1,63 @@
+---
+- hosts: nginx
+  gather_facts: no
+  become: true
+  become_method: sudo
+  become_user: root
+  remote_user: ubuntu
+  roles:
+      - nginx
+  tags:
+      - nginx
+
+- hosts: db01 db02
+  gather_facts: no
+  roles:
+      - mysql
+  tags:
+      - mysql
+
+- hosts: app
+  gather_facts: no
+  become: true
+  become_method: sudo
+  become_user: root
+  remote_user: ubuntu
+  roles:
+      - wordpress
+  tags:
+      - app
+
+- hosts: gitlab
+  gather_facts: no
+  become: true
+  become_method: sudo
+  become_user: root
+  remote_user: ubuntu
+  roles:
+      - gitlab
+  tags:
+      - gitlab
+
+- hosts: runner
+  gather_facts: no
+  roles:
+      - runner
+  tags:
+      - runner
+
+- hosts: monitoring
+  gather_facts: no
+  roles:
+      - prometheus
+      - grafana
+      - alertmanager
+  tags:
+      - monitoring
+
+- hosts: all #this is default group_vars of ansible
+  gather_facts: no
+  roles:
+      - node_exporter
+  tags:
+      - node_exporter

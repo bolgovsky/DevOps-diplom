@@ -1,0 +1,18 @@
+stages:
+  - deploy
+
+deploy-job:
+  stage: deploy
+  only:
+    variables:
+      - $CI_COMMIT_TAG =~ /v(\d+\.\d+\.\d+)/
+
+  script:
+    - echo "start delivery"
+    - ssh -o StrictHostKeyChecking=no runner@app.bolgovsky.ru sudo chown runner -R /var/www/app.bolgovsky.ru/wordpress/
+    - rsync -vz -e "ssh -o StrictHostKeyChecking=no" $CI_PROJECT_DIR/* runner@app.bolgovsky.ru:/var/www/app.bolgovsky.ru/wordpress/
+    - echo "remove .git repo from host"
+    - ssh -o StrictHostKeyChecking=no runner@app.bolgovsky.ru rm -rf /var/www/app.bolgovsky.ru/wordpress/.git
+    - echo "set www-data rigths"
+    - ssh -o StrictHostKeyChecking=no runner@app.bolgovsky.ru sudo chown www-data -R /var/www/app.bolgovsky.ru/wordpress/
+    - echo "delivery complete!"

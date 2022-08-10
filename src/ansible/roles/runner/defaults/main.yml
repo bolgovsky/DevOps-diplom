@@ -1,0 +1,4 @@
+---
+# defaults file for runner
+gitlab_runner_token: "45817210-36f6-4093-8df5-f76b60481a09"
+domain: "bolgovsky.ru"

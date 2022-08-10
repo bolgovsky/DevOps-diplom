@@ -1,0 +1,114 @@
+---
+# tasks file for nginx
+
+- name: Installing tools
+  apt: >
+    package={{ item }}
+    state=present
+    update_cache=yes
+  with_items:
+    - nginx
+    - iptables-persistent
+    - certbot
+
+- name: Create NAT Iptables
+  become: true
+  iptables:
+    table: nat
+    chain: POSTROUTING
+    out_interface: 'eth0'
+    jump: MASQUERADE
+
+- name: Enable IPv4 forwarding
+  become: true
+  sysctl:
+    name: net.ipv4.ip_forward
+    value: 1
+    state: present
+    reload: true
+
+- name: Copy http config
+  become: true
+  template:
+    src: templates/http.j2
+    dest: /etc/nginx/sites-available/http
+
+- name: Create directory for simple html
+  become: true
+  file:
+    name: /var/www/{{ domain }}/html
+    state: directory
+
+- name: disable default site config
+  become: true
+  template:
+    src: templates/default.conf
+    dest: /etc/nginx/sites-enabled/default
+
+- name: Copy html file
+  become: true
+  template:
+    src: templates/index.html
+    dest: /var/www/{{ domain }}/html
+
+- name: Create a symbolic link
+  become: true
+  file:
+    src: /etc/nginx/sites-available/http
+    dest: /etc/nginx/sites-enabled/http
+    state: link
+    force: yes
+
+- name: restart nginx
+  become: true
+  systemd:
+    name: nginx
+    state: restarted
+    enabled: yes
+    daemon_reload: yes
+
+- name: get test/stage cert add --test-cert for use test certificate
+  become: true
+  shell: >
+    certbot certonly -d {{ domain }} -d www.{{ domain }} -d gitlab.{{ domain }} -d grafana.{{ domain }} -d alertmanager.{{ domain }} -d prometheus.{{ domain }}
+    --email bolgovsky@mail.ru --agree-tos --webroot -w /var/www/{{ domain }}/html --non-interactive
+
+- name: Add cron job for certbot renewal
+  become: true
+  cron:
+    name: Certbot automatic renewal
+    job: "certbot renew"
+    month: "*/2"
+
+- name: Copy https config
+  become: true
+  template:
+    src: templates/https.j2
+    dest: /etc/nginx/sites-available/https
+
+- name: Create a symbolic link
+  become: true
+  file:
+    src: /etc/nginx/sites-available/https
+    dest: /etc/nginx/sites-enabled/https
+    state: link
+    force: yes
+
+- name: Copy http config with redirect
+  become: true
+  template:
+    src: templates/http_301.j2
+    dest: /etc/nginx/sites-available/http
+
+- name: restart nginx
+  become: true
+  systemd:
+    name: nginx
+    state: restarted
+    enabled: yes
+    daemon_reload: yes
+
+- name: Wait
+  ansible.builtin.wait_for:
+    timeout: 10
+  delegate_to: localhost
